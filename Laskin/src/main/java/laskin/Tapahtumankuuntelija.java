@@ -1,59 +1,81 @@
 package laskin;
 
+import java.util.HashMap;
+import java.util.Map;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
 public class Tapahtumankuuntelija implements EventHandler {
-    private TextField tuloskentta; 
-    private TextField syotekentta; 
-    private Button plus;
-    private Button miinus;
-    private Button nollaa;
-    private Button undo;
-    private Sovelluslogiikka sovellus;
+    private final Map<EventTarget, Komento> nappienKomennot;
+    private final Button undo;
+    private Komento edellinen = null;
 
-    public Tapahtumankuuntelija(TextField tuloskentta, TextField syotekentta, Button plus, Button miinus, Button nollaa, Button undo) {
-        this.tuloskentta = tuloskentta;
-        this.syotekentta = syotekentta;
-        this.plus = plus;
-        this.miinus = miinus;
-        this.nollaa = nollaa;
+    public Tapahtumankuuntelija(
+        TextField tuloskentta,
+        TextField syotekentta,
+        Button plus,
+        Button miinus,
+        Button nollaa,
+        Button undo
+    ) {
         this.undo = undo;
-        this.sovellus = new Sovelluslogiikka();
+        this.nappienKomennot = luoKomennot(
+            tuloskentta,
+            syotekentta,
+            plus,
+            miinus,
+            nollaa,
+            undo,
+            new Sovelluslogiikka()
+        );
     }
-    
+
+    private Map<EventTarget, Komento> luoKomennot(
+        TextField tuloskentta,
+        TextField syotekentta,
+        Button plus,
+        Button miinus,
+        Button nollaa,
+        Button undo,
+        Sovelluslogiikka sovellus
+    ) {
+        HashMap<EventTarget, Komento> komennot = new HashMap<>();
+        komennot.put(plus, new Summa(tuloskentta, syotekentta, nollaa, undo, sovellus));
+        komennot.put(miinus, new Erotus(tuloskentta, syotekentta, nollaa, undo, sovellus));
+        komennot.put(nollaa, new Nollaus(tuloskentta, syotekentta, nollaa, undo, sovellus));
+        return komennot;
+    }
+
     @Override
     public void handle(Event event) {
-        int arvo = 0;
- 
-        try {
-            arvo = Integer.parseInt(syotekentta.getText());
-        } catch (Exception e) {
+        if (event.getTarget() == undo) {
+            peruKomento();
+            return;
         }
- 
-        if (event.getTarget() == plus) {
-            sovellus.plus(arvo);
-        } else if (event.getTarget() == miinus) {
-            sovellus.miinus(arvo);
-        } else if (event.getTarget() == nollaa) {
-            sovellus.nollaa();
-        } else {
-            System.out.println("undo pressed");
-        }
-        
-        int laskunTulos = sovellus.tulos();
-        
-        syotekentta.setText("");
-        tuloskentta.setText("" + laskunTulos);
-        
-        if ( laskunTulos==0) {
-            nollaa.disableProperty().set(true);
-        } else {
-            nollaa.disableProperty().set(false);
-        }
-        undo.disableProperty().set(false);
+
+        Komento komento = haeKomento(event.getTarget());
+        suoritaKomento(komento);
     }
 
+    private void peruKomento() {
+        if (edellinen != null) {
+            edellinen.peru();
+            edellinen = null;
+        }
+    }
+
+    private Komento haeKomento(EventTarget eventTarget) {
+        return nappienKomennot.getOrDefault(
+            eventTarget,
+            new Tuntematon()
+        );
+    }
+
+    private void suoritaKomento(Komento komento) {
+        komento.suorita();
+        edellinen = komento;
+    }
 }
