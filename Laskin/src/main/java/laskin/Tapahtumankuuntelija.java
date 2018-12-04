@@ -11,7 +11,7 @@ import javafx.scene.control.TextField;
 public class Tapahtumankuuntelija implements EventHandler {
     private final Map<EventTarget, Komento> nappienKomennot;
     private final Button undo;
-    private Komento edellinen = null;
+    private Komento edellinenKomento = null;
 
     public Tapahtumankuuntelija(
         TextField tuloskentta,
@@ -61,9 +61,9 @@ public class Tapahtumankuuntelija implements EventHandler {
     }
 
     private void peruKomento() {
-        if (edellinen != null) {
-            edellinen.peru();
-            edellinen = null;
+        if (edellinenKomento != null) {
+            edellinenKomento.peru();
+            edellinenKomento = null;
         }
     }
 
@@ -76,6 +76,6 @@ public class Tapahtumankuuntelija implements EventHandler {
 
     private void suoritaKomento(Komento komento) {
         komento.suorita();
-        edellinen = komento;
+        edellinenKomento = komento;
     }
 }

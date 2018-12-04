@@ -19,4 +19,9 @@ public class Erotus extends LaskuKomento {
     protected void laske() {
         sovellus.miinus(syotettyArvo);
     }
+
+    @Override
+    protected void laskeUndo() {
+        sovellus.plus(syotettyArvo);
+    }
 }

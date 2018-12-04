@@ -19,4 +19,9 @@ public class Summa extends LaskuKomento {
     protected void laske() {
         sovellus.plus(syotettyArvo);
     }
+
+    @Override
+    protected void laskeUndo() {
+        sovellus.miinus(syotettyArvo);
+    }
 }

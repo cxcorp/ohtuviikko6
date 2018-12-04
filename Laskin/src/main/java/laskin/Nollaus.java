@@ -19,4 +19,9 @@ public class Nollaus extends LaskuKomento {
     protected void laske() {
         sovellus.nollaa();
     }
+
+    @Override
+    protected void laskeUndo() {
+        sovellus.asetaArvo(edellinenArvo);
+    }
 }

@@ -3,7 +3,11 @@ package laskin;
 public class Sovelluslogiikka {
  
     private int tulos;
- 
+
+    public void asetaArvo(int luku) {
+        this.tulos = luku;
+    }
+
     public void plus(int luku) {
         tulos += luku;
     }

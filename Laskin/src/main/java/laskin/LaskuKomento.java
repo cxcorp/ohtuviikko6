@@ -7,6 +7,7 @@ public abstract class LaskuKomento implements Komento {
 
     protected Sovelluslogiikka sovellus;
     protected int syotettyArvo;
+    protected int edellinenArvo;
     private TextField tuloskentta;
     private TextField syotekentta;
     private Button nollaa;
@@ -23,21 +24,31 @@ public abstract class LaskuKomento implements Komento {
     @Override
     public void suorita() {
         syotettyArvo = safeParseInt(syotekentta.getText());
+        edellinenArvo = safeParseInt(tuloskentta.getText());
 
         laske();
         int tulos = sovellus.tulos();
-
         asetaTulos(tulos);
-        enabloiNollaus(tulos != 0);
-        enabloiPeruminen();
     }
 
     @Override
     public void peru() {
-        System.out.println("peru");
+        laskeUndo();
+        int tulos = sovellus.tulos();
+        asetaTulos(tulos);
     }
 
+    protected abstract void laske();
+
+    protected abstract void laskeUndo();
+
     private void asetaTulos(int tulos) {
+        asetaTulosKenttiin(tulos);
+        enabloiNollaus(tulos != 0);
+        enabloiPeruminen();
+    }
+
+    private void asetaTulosKenttiin(int tulos) {
         syotekentta.setText("");
         tuloskentta.setText("" + tulos);
     }
@@ -57,6 +68,4 @@ public abstract class LaskuKomento implements Komento {
             return 0;
         }
     }
-
-    protected abstract void laske();
 }
