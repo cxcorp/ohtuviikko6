@@ -1,15 +1,14 @@
 
 package statistics.matcher;
 
-import java.lang.reflect.Method;
 import statistics.Player;
 
-public class HasAtLeast implements Matcher {
+public class HasFewerThan implements Matcher {
 
     private final int value;
     private final String fieldName;
 
-    public HasAtLeast(int value, String category) {
+    public HasFewerThan(int value, String category) {
         this.value = value;
         this.fieldName = category;
     }
@@ -17,7 +16,7 @@ public class HasAtLeast implements Matcher {
     @Override
     public boolean matches(Player p) {
         int playersValue = getCategoryValue(p);
-        return playersValue >= value;
+        return playersValue < value;
     }
 
     private int getCategoryValue(Player player) {
