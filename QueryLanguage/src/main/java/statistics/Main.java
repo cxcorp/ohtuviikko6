@@ -8,9 +8,14 @@ public class Main {
 
         QueryBuilder query = new QueryBuilder();
 
-        Matcher m = query.playsIn("NYR")
-            .hasAtLeast(10, "goals")
-            .hasFewerThan(25, "goals").build();
+        Matcher m = query.oneOf(
+            query.playsIn("PHI")
+                .hasAtLeast(10, "goals")
+                .hasFewerThan(20, "assists").build(),
+
+            query.playsIn("EDM")
+                .hasAtLeast(60, "points").build()
+        ).build();
 
         for (Player player : stats.matches(m)) {
             System.out.println(player);
